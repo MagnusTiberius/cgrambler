@@ -87,3 +87,11 @@ void InitCGRambler()
 
 [http://img849.ph.126.net/uYcWeInJjDr-8aLBsEyMkA==/2695967326935761404.jpg]
 ==Phong_Shadowed_Glow_InCGRambler2.0==
+
+
+
+
+
+
+=<font color="#FF0000">请统一在下面发表评论，以便本人回复。当然，你需要事先登陆google帐号。</font>=
+=<font color="#FF0000">Please comment this project below, so that I can reply. Please sign in first.</font>=
