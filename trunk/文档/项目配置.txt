@@ -1,0 +1,1 @@
+首先要有win7,然后要安装最新版的DirectX 10 SDK,先去编译SDK里面的DXUT,然后把SDK的include目录和lib目录（包括刚才的DXUT在内）增加到VC。再把SDK的Utilities里面的fxc(Shader编译器）复制到Windows/system32/下面。
