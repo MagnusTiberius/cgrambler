@@ -1,5 +1,4 @@
 #labels CGRambler,华南师范大学,李海全
-
 =About the official page:=
 http://code.google.com/p/cgrambler/ is the official page of CGRambler2.0, you can download the newest source code and screenshots of this project from that site. Please comment this project at the bottom of this page, so that I can reply.
 
@@ -12,7 +11,8 @@ You need windows 7, with the newest DirectX 10 SDK installed. Compile the DXUT f
 
 =About the author:=
 South China Normal University, Grade 2008, HaiQuan Li, cgrambler@gmail.com
-_______________________________________________________________________________
+
+--------------------------------------------------------------------------------------------------------------------
 =Module 1 FX Composer SAS Based Shader Loader=
 Finished time 2011/2/14
 FX Composer is one of the best Shader IDEs, it has powerful SAS. which SAS, developers can develop shaders without writing C++. The functions of this Module is to bind variables, update variables, load resources(e.g textures), control rendering process. With the help of this Module, loading shaders can be very easy.
@@ -47,11 +47,4 @@ void InitCGRambler()
 	pGlow->addMesh(pMesh);
 	pGlow->addMesh(pFloor);
 }
-
-
-
-
-
- 
-
 
