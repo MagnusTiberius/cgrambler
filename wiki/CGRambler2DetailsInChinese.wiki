@@ -90,4 +90,4 @@ void InitCGRambler()
 [http://img849.ph.126.net/uYcWeInJjDr-8aLBsEyMkA==/2695967326935761404.jpg]
 
 
-=<font color=#FF0000>请统一在本页面最底端发表评论，以便本人回复。</font>=
+= <font color=#FF0000> 请统一在本页面最底端发表评论，以便本人回复。 </font> =
