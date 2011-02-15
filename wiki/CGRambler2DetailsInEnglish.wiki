@@ -1,4 +1,4 @@
-#labels CGRambler,华南师范大学,李海全
+#labels CGRambler,SCNU,HaiQuanLi
 =About the official page:=
 http://code.google.com/p/cgrambler/ is the official page of CGRambler2.0, you can download the newest source code and screenshots of this project from that site. Please comment this project at the bottom of this page, so that I can reply.
 
