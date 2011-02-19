@@ -4,7 +4,7 @@ http://code.google.com/p/cgrambler/ 是CGRambler2.0的官方网站，你可以�
 
 
 =项目简介：=
-CGRambler2.0是继CGRambler1.0之后开发的一款基于DirectX 10的图形渲染引擎，关于CGRambler1.0，请浏览http://user.qzone.qq.com/499482794/blog/1285834895
+CGRambler2.0是继CGRambler1.0之后，于2011年1月18号开始开发的一款基于DirectX 10的图形渲染引擎，关于CGRambler1.0，请浏览http://user.qzone.qq.com/499482794/blog/1285834895
 相比CGRambler1.0，CGRambler2.0经过重新架构（几乎是重写），将更加注重引擎构架本身，即“看不见的渲染艺术”，而不是华丽的Shader。另外，本项目采用开源方式，可自由用于商业或非商业用途。
 
 
@@ -20,13 +20,93 @@ CGRambler2.0是继CGRambler1.0之后开发的一款基于DirectX 10的图形渲�
 
 
 =Class Diagram=
-[http://img1.ph.126.net/uo4GMkUHf6y-ZLwEVaMWqg==/3181511661762413508.jpg]
+[http://img.ph.126.net/3TuRQa2fxqYf4SWEfVKD4Q==/2299087609773267113.jpg]
+
+
+-------------------------------------------------------------------------------------------------------------------
+=模块2  Mesh Lod=
+完成时间 2011/2/19
+
+==算法步骤:==
+(1)遍历所有三角形，计算出每个顶点的权重。权重因素1，cos(a)，其中a为以顶点为中心的所有对边的最大夹角。权重因素2，经过顶点的所有边的最大边长。
+
+(2)根据权重对顶点进行非升排序。
+
+(3)将空间平均分成分割成多个grid.
+
+(4)建立grid的哈希表。
+
+(5)遍历所有顶点，将坐标除以grid大小，进行小数截断，哈希到对应的grid中.
+
+(6)根据其所在的grid和邻近的7个grid，查找是否已存在包含它的cell(cell的大小和grid一样). 若存在，则该顶点被该cell的中心顶点所取代。否则，以该顶点为中心，建立新的cell，并保存在包含它的grid中。
+
+(7)遍历所有三角形，将没有退化的三角形的Index保存到一个新的IndicesBuffer, 过滤出没有退化的三角形的Vertex, 作为一个LOD。
+
+(8)设定grid的不同大小，重复(3)(4)(5)(6)(7)建立多个LOD。
+
+(9)设D为Mesh到Camera的距离，FOV为视角，windowsHeight为窗口高度，根据R=(2Dtan(FOV/2))/widowsHeight, 计算出屏幕上一个像素对应在世界空间的大小R。
+
+(10)找到grid大小刚才小于或等于R的LOD进行渲染。
+
+==参考文献：==
+《Multi-resolution 3D approximations for rendering complex scenes》
+
+http://www.cs.uu.nl/docs/vakken/ddm/slides/papers/rossignac.pdf
+
+《 Model simplification using vertex-clustering》
+
+http://portal.acm.org/citation.cfm?id=253284.253310
+
+==测试数据：==
+文件名：goof_knight.sdkmesh	文件大小：183kb 	三角形数：6043   顶点数：3455
+
+文件名：Warrior.sdkmesh		文件大小：2.57 MB 	三角形数：11160  顶点数：33480
+
+文件名：exoticcar.sdkmesh		文件大小：4.16 MB 	三角形数：40112  顶点数：120336
+
+文件名：dragon.sdkmesh		文件大小：23.4 MB 	三角形数：871318 顶点数：441491
+
+
+= LOD_Solid_Knight=
+[http://img839.ph.126.net/5mWm6F363S6_UOJhnlznZg==/779685685490634657.jpg]
+
+
+= LOD_WireFrame_Knight=
+[http://img165.ph.126.net/ZTvafkJsc5AJ1ZE2COF9fg==/2257147838244296753.jpg]
+
+
+= LOD_Solid_Knight_Auto=
+[http://img234.ph.126.net/rK5whKnJqHAUlCMOLAEw9w==/2122602799376877866.jpg]
+
+
+= LOD_Solid_Warrior=
+[http://img768.ph.126.net/596tItkeQBXNtvmJZECoVw==/2991234577505445476.jpg]
+
+
+= LOD_WireFrame_Warrior=
+[http://img839.ph.126.net/TDTyCt8g1cxKfUIZ3Utozg==/779685685490634710.jpg]
+
+
+= LOD_Solid_exoticcar=
+[http://img533.ph.126.net/5qS2aF3t13yAv94d_OiYcA==/1278740819197697883.jpg]
+
+
+= LOD_WireFrame_exoticcar=
+[http://img843.ph.126.net/q6KIU2nRBA8NrAjj-yDDPw==/1875186294848358806.jpg]
+
+
+= LOD0_Solid_dragon=
+[http://img687.ph.126.net/dlzfCkSXzvq4SOBNNh-20w==/1111544683031658622.jpg]
+
+
+= LOD_MAX_Solid_dragon=
+[http://img165.ph.126.net/O5W-PJEZlM3hrSpEpnmC8Q==/2257147838244296707.jpg]
 
 
 -------------------------------------------------------------------------------------------------------------------
 
 
-=模块一 基于FX Composer SAS的Shader载入= 
+=模块1  基于FX Composer SAS的Shader载入= 
 完成时间 2011/2/14
 
 FX Composer是目前两大Shader的IDE之一，它有很强大的SAS，从而使开发者在编写Shaders时用不着写C++。本模块的作用就是根据FX Composer的SAS，全自动地进行Shader变量的绑定，更新，资源（比如纹理）的载入，控制渲染流程。有了本模块，Shader的载入将变得极奇方便。
