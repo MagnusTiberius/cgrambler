@@ -4,7 +4,7 @@ http://code.google.com/p/cgrambler/ is the official page of CGRambler2.0, you ca
 
 
 =Brief Introduction to CGRambler2.0:=
-CGRambler2.0 is a DirectX 10 based rendering engine, for the previous version of CGRambler1.0,please see http://user.qzone.qq.com/499482794/blog/1285834895
+CGRambler2.0 is a DirectX 10 based rendering engine under developing since 2011/1/18, for the previous version of CGRambler1.0, please see http://user.qzone.qq.com/499482794/blog/1285834895
 Compare with CGrambler1.0, CGRambler2.0 have been designed from the very beginning. It will focus on the architecture of the engine itself, not the gorgeous shaders. In addition, this project is completely open source, you can use it for commercial or non-commercial without permission.
 
 
@@ -20,7 +20,77 @@ South China Normal University, Grade 2008, HaiQuan Li, cgrambler@gmail.com
 
 
 =Class Diagram=
-[http://img1.ph.126.net/uo4GMkUHf6y-ZLwEVaMWqg==/3181511661762413508.jpg]
+[http://img.ph.126.net/3TuRQa2fxqYf4SWEfVKD4Q==/2299087609773267113.jpg]
+
+
+-------------------------------------------------------------------------------------------------------------------
+=Module 2  Mesh Lod=
+Finished Time 2011/2/19
+
+==Algorithm:==
+(1)Traverse all triangles, calculate weight of all vertex. Weight factor 1, cos(a), a is the maximum angle of incident edges on the vertex. Weight factor 2, the length of the longest among all the edge upon the vertex.
+
+(2)Sort all vertices in the vertex-list in non-increasing order on their weights.
+
+(3)The vertex with the highest weight will be the center of a new clustering-cell, and all vertices till within the cell are removed from the vertex-list and replaced by a unique representative vertex.
+repeat (2) for the next highest weighted vertex in the vertex-list.
+
+
+==参考文献：==
+《Multi-resolution 3D approximations for rendering complex scenes》
+
+http://www.cs.uu.nl/docs/vakken/ddm/slides/papers/rossignac.pdf
+
+《 Model simplification using vertex-clustering》
+
+http://portal.acm.org/citation.cfm?id=253284.253310
+
+
+==Test Data：==
+||FileName：goof_knight.sdkmesh  ||FileSize：183kb 	    ||TrianglesNum：6043    ||VerticesNum：3455||
+
+||FileName：Warrior.sdkmesh	  ||FileSize：2.57 MB    ||TrianglesNum：11160   ||VerticesNum：33480||
+
+||FileName：exoticcar.sdkmesh     ||FileSize：4.16 MB    || TrianglesNum：40112    || VerticesNum：120336||
+
+||FileName：dragon.sdkmesh	  || FileSize：23.4 MB   ||TrianglesNum：871318   || VerticesNum：441491||
+
+
+
+= LOD_Solid_Knight=
+[http://img839.ph.126.net/5mWm6F363S6_UOJhnlznZg==/779685685490634657.jpg]
+
+
+= LOD_WireFrame_Knight=
+[http://img165.ph.126.net/ZTvafkJsc5AJ1ZE2COF9fg==/2257147838244296753.jpg]
+
+
+= LOD_Solid_Knight_Auto=
+[http://img234.ph.126.net/rK5whKnJqHAUlCMOLAEw9w==/2122602799376877866.jpg]
+
+
+= LOD_Solid_Warrior=
+[http://img768.ph.126.net/596tItkeQBXNtvmJZECoVw==/2991234577505445476.jpg]
+
+
+= LOD_WireFrame_Warrior=
+[http://img839.ph.126.net/TDTyCt8g1cxKfUIZ3Utozg==/779685685490634710.jpg]
+
+
+= LOD_Solid_exoticcar=
+[http://img533.ph.126.net/5qS2aF3t13yAv94d_OiYcA==/1278740819197697883.jpg]
+
+
+= LOD_WireFrame_exoticcar=
+[http://img843.ph.126.net/q6KIU2nRBA8NrAjj-yDDPw==/1875186294848358806.jpg]
+
+
+= LOD0_Solid_dragon=
+[http://img687.ph.126.net/dlzfCkSXzvq4SOBNNh-20w==/1111544683031658622.jpg]
+
+
+= LOD_MAX_Solid_dragon=
+[http://img165.ph.126.net/O5W-PJEZlM3hrSpEpnmC8Q==/2257147838244296707.jpg]
 
 
 -------------------------------------------------------------------------------------------------------------------
