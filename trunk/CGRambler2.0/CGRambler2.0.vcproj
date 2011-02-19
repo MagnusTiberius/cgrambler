@@ -64,7 +64,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="vld.lib DXUT.lib DXUTOpt.lib d3dx9d.lib d3d9.lib d3dx10d.lib dxerr.lib dxguid.lib comctl32.lib"
-				LinkIncremental="2"
+				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -192,11 +192,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GridHashTable.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Light.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Mesh.cpp"
+				RelativePath=".\LODMesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MeshInstance.cpp"
 				>
 			</File>
 			<File
@@ -208,7 +216,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TextPrinter.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Texture.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\VertexCluster.cpp"
 				>
 			</File>
 			<File
@@ -238,11 +254,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\GridHashTable.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Light.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Mesh.h"
+				RelativePath=".\LODMesh.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MeshInstance.h"
 				>
 			</File>
 			<File
@@ -262,7 +286,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TextPrinter.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Texture.h"
+				>
+			</File>
+			<File
+				RelativePath=".\VertexCluster.h"
 				>
 			</File>
 			<File
@@ -367,6 +399,10 @@
 						CommandLine="fxc /T fx_4_0 /Fo ./../Media/Quad.fxo  ./../Media/Quad.fx&#x0D;&#x0A;"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\Media\WireFrame.fx"
+				>
 			</File>
 		</Filter>
 		<File

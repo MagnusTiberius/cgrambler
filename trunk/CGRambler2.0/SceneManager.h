@@ -1,22 +1,39 @@
 /*
+.____     ____    ____                         __       ___                          ___         __     
+/\  _`\  /\  _`\ /\  _`\                      /\ \     /\_ \                       /'___`\     /'__`\   
+\ \ \/\_\\ \ \L\_\ \ \L\ \     __      ___ ___\ \ \____\//\ \      __   _ __      /\_\ /\ \   /\ \/\ \  
+.\ \ \/_/_\ \ \L_L\ \ ,  /   /'__`\  /' __` __`\ \ '__`\ \ \ \   /'__`\/\`'__\    \/_/// /__  \ \ \ \ \ 
+..\ \ \L\ \\ \ \/, \ \ \\ \ /\ \L\.\_/\ \/\ \/\ \ \ \L\ \ \_\ \_/\  __/\ \ \/        // /_\ \__\ \ \_\ \
+...\ \____/ \ \____/\ \_\ \_\ \__/.\_\ \_\ \_\ \_\ \_,__/ /\____\ \____\\ \_\       /\______/\_\\ \____/
+....\/___/   \/___/  \/_/\/ /\/__/\/_/\/_/\/_/\/_/\/___/  \/____/\/____/ \/_/       \/_____/\/_/ \/___/ 
+
+
 =关于官方网站：=
 http://code.google.com/p/cgrambler/ 是CGRambler2.0的官方网站，你可以在那下载到本项目的最新源码，高清截图。请统一在官方网站发表评论，以便本人回复。
-=About the official page:=
-http://code.google.com/p/cgrambler/ is the official page of CGRambler2.0, you can download the newest source code and screenshots of this project from that site.Please comment this project at the official page, so that I can reply.
 
 =项目简介：=
-CGRambler2.0是继CGRambler1.0之后开发的一款基于DirectX 10的图形渲染引擎，关于CGRambler1.0，请浏览http://user.qzone.qq.com/499482794/blog/1285834895
+CGRambler2.0是继CGRambler1.0之后，于2011年1月18号开始开发的一款基于DirectX 10的图形渲染引擎，关于CGRambler1.0，请浏览http://user.qzone.qq.com/499482794/blog/1285834895
 相比CGRambler1.0，CGRambler2.0经过重新架构（几乎是重写），将更加注重引擎构架本身，即“看不见的渲染艺术”，而不是华丽的Shader。另外，本项目采用开源方式，可自由用于商业或非商业用途。
-=Brief Introduction to CGRambler2.0:=
-CGRambler2.0 is a DirectX 10 based rendering engine, for the previous version of CGRambler1.0,please see http://user.qzone.qq.com/499482794/blog/1285834895
-Compare with CGrambler1.0, CGRambler2.0 have been designed from the very begining. It will focus on the architecture of the engine itself, not the gorgeous shaders. In addition, this project is completely open source, you can use it for commercial or non-commercial without permission.
 
 =关于作者：=
 华南师范大学 08级 李海全 cgrambler@gmail.com
+
+******************************************************************************************************************************************************************************************************************************************************************************************************
+
+=Brief Introduction to CGRambler2.0:=
+CGRambler2.0 is a DirectX 10 based rendering engine under developing since 2011/1/18, for the previous version of CGRambler1.0,please see http://user.qzone.qq.com/499482794/blog/1285834895
+Compare with CGrambler1.0, CGRambler2.0 have been designed from the very begining. It will focus on the architecture of the engine itself, not the gorgeous shaders. In addition, this project is completely open source, you can use it for commercial or non-commercial without permission.
+
+=About the official page:=
+http://code.google.com/p/cgrambler/ is the official page of CGRambler2.0, you can download the newest source code and screenshots of this project from that site.Please comment this project at the official page, so that I can reply.
+
 =About the author:=
 South China Normal University, Grade 2008, HaiQuan Li, cgrambler@gmail.com
 */
 #pragma once
+
+
+
 #include "CGRambler.h" 
 #include <map>
 #include "WString.h"
@@ -43,19 +60,22 @@ using namespace std;
 
 struct QuadVertex
 {
-	D3DXVECTOR3 pos;
-	D3DXVECTOR2 uv;
+	D3DXVECTOR3 mPos;
+	D3DXVECTOR2 mUV;
 };
 
-typedef map<WString,MeshPtr>::iterator MeshItr;
 
-class SceneManager
+typedef map<WString,::LODMeshPtr>::iterator LODMeshItr;
+typedef map<WString,MeshInstancePtr>::iterator MeshInstanceItr;
+
+class SceneManager 
 {
-
+	map<WString, LODMeshPtr> mLODMeshs;
+	std::map<WString,MeshInstancePtr> mMeshInstances;
 	HRESULT hr;
 	static SceneManagerPtr mSingleton;
 	std::map<WString,EffectPtr> mEffects;
-	std::map<WString,MeshPtr> mMeshs;
+
 	ID3D10DevicePtr mDevice;
 	CameraPtr mCamera;
 	float mElapsedTime;
@@ -82,34 +102,22 @@ class SceneManager
 	ID3D10EffectPassPtr mCurPass;
 	WString mCurPassName;
 
-	ID3DX10FontPtr mFont;
-	ID3DX10SpritePtr mSprite;
-	CDXUTTextHelperPtr mTextHelper;
-
-	WString mTextBuf[MAX_PATH];
-	UINT mTextNum;
-
-
-
-
 private:
 	SceneManager();
-
-	void markRenderEventBegin(const WString &effectName,const WString &passName,const WString &events);
-	void markRenderEventEnd();
-	void handleRenderScripts(bool techScripts,EffectPtr effect,MeshPtr mesh,const WString &scriptStr,const WString &scriptClass,const WString &scriptOrder);
-	void renderMesh(EffectPtr effect,MeshPtr mesh);
-	void  updataMatrixs(::ID3D10EffectMatrixVariablePtr var,const WString& semantic,  D3DXMATRIX  world,   D3DXMATRIX  view,  D3DXMATRIX  proj);
+	void handleRenderScripts(bool techScripts,EffectPtr effect,MeshInstancePtr mesh,const WString &scriptStr,const WString &scriptClass,const WString &scriptOrder);
+	void renderMesh(EffectPtr effect,MeshInstancePtr mesh);
+	void updataMatrixs(::ID3D10EffectMatrixVariablePtr var,const WString& semantic,  D3DXMATRIX  world,   D3DXMATRIX  view,  D3DXMATRIX  proj);
 	void createQuadBuf();
 
 	TexturePtr getTexture(const WString &name);
 	void clearShaderResources();
 	void clearRenderTargets();
-	void paramsUpdateEveryMesh(map<WString,ParameterPtr> &params,MeshPtr mesh);
+	void paramsUpdateEveryMesh(map<WString,ParameterPtr> &params,MeshInstancePtr mesh);
 	void paramsUpdateEveryFrame(map<WString,ParameterPtr> &params);
-	void drawText(const D3DXVECTOR4 &color=D3DXVECTOR4(1.0f,1.0f,0.0f,1.0f));
+
 	void setRenderTargets(const WString &rtv,const WString &dsv);
 	void presentToScreen(const WString &target);
+	void drawQuad(ID3D10EffectPassPtr pass);
 public:
 	void init(ID3D10DevicePtr device);
 	virtual void Release();
@@ -120,15 +128,15 @@ public:
 	EffectPtr createEffect(const WString &name,const WString &fileName);
 	EffectPtr getEffect(const WString &name);
 	//fileName是否在mMeshs的mFileName成员中已出现
-	MeshPtr createMesh(const WString &name,const WString &meshFileName,const WString &skeFileName,const D3DXVECTOR4 &pos=D3DXVECTOR4(0.0f,0.0f,0.0f,0.0f),const D3DXVECTOR4 &dir=D3DXVECTOR4(0.0f,0.0f,1.0f,0.0f),const D3DXVECTOR4 &size=D3DXVECTOR4(1.0f,1.0f,1.0f,0.0f));
-	MeshPtr getMesh(const WString &name);
+	MeshInstancePtr createMesh(const WString &name,const WString &meshFileName,const WString &skeFileName,  D3DXVECTOR3 &pos=D3DXVECTOR3(0.0f,0.0f,0.0f),  D3DXVECTOR3 &dir=D3DXVECTOR3(0.0f,0.0f,1.0f), D3DXVECTOR3 &size=D3DXVECTOR3(1.0f,1.0f,1.0f));
+	MeshInstancePtr getMesh(const WString &name);
 	CameraPtr getCamera();
 	void setAmbientColor(const D3DXVECTOR4 &color);
 	//检查texBuf的mFileName是否在mTexture的成员中已出现
 	TexturePtr createFileTexture(const WString &fileName,const WString &type);
 	TexturePtr createManualTexture(const WString &fileName,FLOAT widthRatio,FLOAT heightRatio,DXGI_FORMAT format);
 	void msgProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
-	LightPtr createLight(const WString &name, const D3DXVECTOR4  &pos, const D3DXVECTOR4 &lookAt,const D3DXVECTOR4 &specular,FLOAT falloffAngle,FLOAT falloffExponent);
+	LightPtr createLight(const WString &name,   D3DXVECTOR3  &pos,   D3DXVECTOR3 &lookAt,const D3DXVECTOR4 &specular,FLOAT falloffAngle,FLOAT falloffExponent);
 	void deleteLight(const WString &name);
 	LightPtr getLight(const WString &name);
 	void setMediaPath(const WString &path);
@@ -138,12 +146,11 @@ public:
 	const D3DXVECTOR3 &getMousePos();
 	const D3DXVECTOR3 &getMouseBut();
 
-	void drawLine(const WString &str);
-	void drawData(const WString &name,const D3DXVECTOR4 &data);
+
 
 
 	const D3DXVECTOR4 &getAmbient();
-	void drawQuad(ID3D10EffectPassPtr pass);
+
 
 
 	void OnD3D10SwapChainReleasing();

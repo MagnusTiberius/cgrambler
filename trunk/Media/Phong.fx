@@ -79,7 +79,7 @@ float SpecExpon : SpecularPower <
 //////// COLOR & TEXTURE /////////////////////
 
 texture ColorTexture : DIFFUSE <
-    string ResourceName = "seafloor.dds";
+    string ResourceName = "seafloor.bmp";
     string UIName =  "Diffuse Texture";
     string ResourceType = "2D";
 >;

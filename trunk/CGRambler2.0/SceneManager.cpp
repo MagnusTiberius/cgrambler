@@ -1,18 +1,32 @@
 /*
+.____     ____    ____                         __       ___                          ___         __     
+/\  _`\  /\  _`\ /\  _`\                      /\ \     /\_ \                       /'___`\     /'__`\   
+\ \ \/\_\\ \ \L\_\ \ \L\ \     __      ___ ___\ \ \____\//\ \      __   _ __      /\_\ /\ \   /\ \/\ \  
+.\ \ \/_/_\ \ \L_L\ \ ,  /   /'__`\  /' __` __`\ \ '__`\ \ \ \   /'__`\/\`'__\    \/_/// /__  \ \ \ \ \ 
+..\ \ \L\ \\ \ \/, \ \ \\ \ /\ \L\.\_/\ \/\ \/\ \ \ \L\ \ \_\ \_/\  __/\ \ \/        // /_\ \__\ \ \_\ \
+...\ \____/ \ \____/\ \_\ \_\ \__/.\_\ \_\ \_\ \_\ \_,__/ /\____\ \____\\ \_\       /\______/\_\\ \____/
+....\/___/   \/___/  \/_/\/ /\/__/\/_/\/_/\/_/\/_/\/___/  \/____/\/____/ \/_/       \/_____/\/_/ \/___/ 
+
+
 =关于官方网站：=
 http://code.google.com/p/cgrambler/ 是CGRambler2.0的官方网站，你可以在那下载到本项目的最新源码，高清截图。请统一在官方网站发表评论，以便本人回复。
-=About the official page:=
-http://code.google.com/p/cgrambler/ is the official page of CGRambler2.0, you can download the newest source code and screenshots of this project from that site.Please comment this project at the official page, so that I can reply.
 
 =项目简介：=
-CGRambler2.0是继CGRambler1.0之后开发的一款基于DirectX 10的图形渲染引擎，关于CGRambler1.0，请浏览http://user.qzone.qq.com/499482794/blog/1285834895
+CGRambler2.0是继CGRambler1.0之后，于2011年1月18号开始开发的一款基于DirectX 10的图形渲染引擎，关于CGRambler1.0，请浏览http://user.qzone.qq.com/499482794/blog/1285834895
 相比CGRambler1.0，CGRambler2.0经过重新架构（几乎是重写），将更加注重引擎构架本身，即“看不见的渲染艺术”，而不是华丽的Shader。另外，本项目采用开源方式，可自由用于商业或非商业用途。
-=Brief Introduction to CGRambler2.0:=
-CGRambler2.0 is a DirectX 10 based rendering engine, for the previous version of CGRambler1.0,please see http://user.qzone.qq.com/499482794/blog/1285834895
-Compare with CGrambler1.0, CGRambler2.0 have been designed from the very begining. It will focus on the architecture of the engine itself, not the gorgeous shaders. In addition, this project is completely open source, you can use it for commercial or non-commercial without permission.
 
 =关于作者：=
 华南师范大学 08级 李海全 cgrambler@gmail.com
+
+******************************************************************************************************************************************************************************************************************************************************************************************************
+
+=Brief Introduction to CGRambler2.0:=
+CGRambler2.0 is a DirectX 10 based rendering engine under developing since 2011/1/18, for the previous version of CGRambler1.0,please see http://user.qzone.qq.com/499482794/blog/1285834895
+Compare with CGrambler1.0, CGRambler2.0 have been designed from the very begining. It will focus on the architecture of the engine itself, not the gorgeous shaders. In addition, this project is completely open source, you can use it for commercial or non-commercial without permission.
+
+=About the official page:=
+http://code.google.com/p/cgrambler/ is the official page of CGRambler2.0, you can download the newest source code and screenshots of this project from that site.Please comment this project at the official page, so that I can reply.
+
 =About the author:=
 South China Normal University, Grade 2008, HaiQuan Li, cgrambler@gmail.com
 */
@@ -55,8 +69,13 @@ void SceneManager::Release()
 
 
 	OnD3D10SwapChainReleasing();
-	map<WString,MeshPtr>::iterator i;
-	for(i=mMeshs.begin();i!=mMeshs.end();i++)
+
+	LODMeshItr m;
+	for(m=mLODMeshs.begin();m!=mLODMeshs.end();m++)
+		delete m->second;
+
+	map<WString,MeshInstancePtr>::iterator i;
+	for(i=mMeshInstances.begin();i!=mMeshInstances.end();i++)
 		delete i->second;
 
 
@@ -70,14 +89,11 @@ void SceneManager::Release()
 		delete k->second;
 
 	SAFE_RELEASE(mQuadBuf);
-	SAFE_DELETE(mTextHelper);
-	SAFE_RELEASE(mFont);
-	SAFE_RELEASE(mSprite);
 
 	SAFE_DELETE(mCamera);
 	SAFE_DELETE(mSingleton);
 
-
+	TextPrinter::getSingleton()->Release();
 }
 
 
@@ -335,7 +351,7 @@ EffectPtr SceneManager::createEffect(const WString &name,const WString &fileName
 
 void SceneManager::init(ID3D10DevicePtr device)
 {
-	mTextNum=0;
+
 	mInited=true;
 	mDevice=device;
 	mCamera=new Camera();
@@ -358,10 +374,6 @@ void SceneManager::init(ID3D10DevicePtr device)
 	createQuadBuf();
 
 
-	D3DX10CreateFont(mDevice,15,0, FW_BOLD,1,FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH |  FF_DONTCARE, L"Arial",  &mFont);
-
-	D3DX10CreateSprite(mDevice,512,&mSprite);
-	mTextHelper=new CDXUTTextHelper(NULL,NULL,mFont,mSprite);
 
 
 	TexturePtr tex;
@@ -385,6 +397,7 @@ void SceneManager::init(ID3D10DevicePtr device)
 
 	createEffect("Quad","Quad.fx");
 
+	TextPrinter::init(mDevice);
 }
 
 
@@ -410,10 +423,8 @@ void SceneManager::onFrameMove(double fTime,float fElapsedTime)
 
 
 
-void SceneManager::handleRenderScripts(bool techScripts,EffectPtr effect,MeshPtr mesh,const WString &scriptStr,const WString &scriptClass,const WString &scriptOrder)
+void SceneManager::handleRenderScripts(bool techScripts,EffectPtr effect,MeshInstancePtr mesh,const WString &scriptStr,const WString &scriptClass,const WString &scriptOrder)
 {
-
-
 
 
 	char cname[MAX_PATH],cvalue[MAX_PATH];
@@ -447,7 +458,7 @@ void SceneManager::handleRenderScripts(bool techScripts,EffectPtr effect,MeshPtr
 		{
 
 
-			markRenderEventBegin(effect->getName(),mCurPassName,cname);
+			Common::markRenderEventBegin("Render",effect->getName()+" "+mCurPassName+" "+cname);
 
 
 
@@ -473,13 +484,13 @@ void SceneManager::handleRenderScripts(bool techScripts,EffectPtr effect,MeshPtr
 			}
 
 
-			markRenderEventEnd();
+			Common::markRenderEventEnd();
 
 		}
 		else if( name=="RENDERDEPTHSTENCILTARGET")
 		{
 
-			markRenderEventBegin(effect->getName(),mCurPassName,cname);
+			Common::markRenderEventBegin("Render",effect->getName()+" "+mCurPassName+" "+cname);
 
 
 			if( value=="")
@@ -488,7 +499,7 @@ void SceneManager::handleRenderScripts(bool techScripts,EffectPtr effect,MeshPtr
 				setRenderTargets(mCurRTV,cvalue);
 
 
-			markRenderEventEnd();
+			Common::markRenderEventEnd();
 
 
 
@@ -506,7 +517,7 @@ void SceneManager::handleRenderScripts(bool techScripts,EffectPtr effect,MeshPtr
 		}else if( name=="CLEAR" )
 		{
 
-			markRenderEventBegin(effect->getName(),mCurPassName,cname);
+			Common::markRenderEventBegin("Render",effect->getName()+" "+mCurPassName+" "+cname);
 
 
 			if( value=="DEPTH"  && mCurDSV!=mMidDSV[0] &&  mCurDSV!=mMidDSV[1])
@@ -515,12 +526,12 @@ void SceneManager::handleRenderScripts(bool techScripts,EffectPtr effect,MeshPtr
 				mDevice->ClearRenderTargetView( getTexture(mCurRTV)->getRenderTargetView() ,mClearColor);
 
 
-			markRenderEventEnd();
+			Common::markRenderEventEnd();
 
 		}else if( name=="PASS" )
 		{
 
-			markRenderEventBegin(effect->getName(),mCurPassName,cname);
+			Common::markRenderEventBegin("Render",effect->getName()+" "+mCurPassName+" "+cname);
 
 			mCurPass=effect->getTech(0)->GetPassByName(cvalue);
 
@@ -551,11 +562,13 @@ void SceneManager::handleRenderScripts(bool techScripts,EffectPtr effect,MeshPtr
 				handleRenderScripts(false,effect,mesh,anoValue,scriptClass,scriptOrder);
 			}
 
-			markRenderEventEnd();
+			Common::markRenderEventEnd();
 		} 
 		else if( name=="DRAW")
 		{
-			markRenderEventBegin(effect->getName(),mCurPassName,cname);
+			Common::markRenderEventBegin("Render",effect->getName()+" "+mCurPassName+" "+cname);
+
+
 			ID3D10RenderTargetViewPtr rtv[]={getTexture(mCurRTV)->getRenderTargetView()};
 			mDevice->OMSetRenderTargets(1,rtv,getTexture(mCurDSV)->getDepthStencilView());
 			mDevice->RSSetViewports(1,&getTexture(mCurRTV)->getViewport());
@@ -579,7 +592,7 @@ void SceneManager::handleRenderScripts(bool techScripts,EffectPtr effect,MeshPtr
 
 				}
 			}
-			markRenderEventEnd();
+			Common::markRenderEventEnd();
 
 		}
 
@@ -623,6 +636,8 @@ void SceneManager::onFrameRender(double fTime,float fElapsedTime)
 	::ID3D10EffectPassPtr pass;
 	::D3D10_PASS_DESC passDesc;
 	UINT meshNum;
+
+
 
 
 
@@ -690,26 +705,29 @@ EffectPtr SceneManager::getEffect(const WString &name)
 }
 
 
-//fileName是否在mMeshs的mFileName成员中已出现
-MeshPtr SceneManager::createMesh(const WString &name,const WString &meshFileName,const WString &skeFileName,const D3DXVECTOR4 &pos,const D3DXVECTOR4 &dir,const D3DXVECTOR4 &size)
+
+MeshInstancePtr SceneManager::createMesh(const WString &name,const WString &meshFileName,const WString &skeFileName,  D3DXVECTOR3 &pos,  D3DXVECTOR3 &dir, D3DXVECTOR3 &size)
 {
+	if(mLODMeshs.find(meshFileName)==mLODMeshs.end())
+	{
+		mLODMeshs[meshFileName]=new LODMesh(mDevice,meshFileName);
 
-
-	MeshPtr newMesh=new Mesh(mDevice,name,meshFileName,true);
+	}
+	MeshInstancePtr newMesh=new MeshInstance(mDevice,mLODMeshs[meshFileName],mCamera,name,meshFileName);
 	newMesh->setPosition(pos);
 	newMesh->setDirection(dir);
 	newMesh->setSize(size);
 	if(skeFileName!="")
 		newMesh->loadSkeleton(skeFileName);
-	mMeshs[name]=newMesh;
+	mMeshInstances[name]=newMesh;
 	return newMesh;
 }
 
 
-MeshPtr SceneManager::getMesh(const WString &name)
+MeshInstancePtr SceneManager::getMesh(const WString &name)
 {
-	assert(mMeshs.find(name)!=mMeshs.end());
-	return mMeshs[name];
+	assert(mMeshInstances.find(name)!=mMeshInstances.end());
+	return mMeshInstances[name];
 }
 
 
@@ -752,10 +770,9 @@ void SceneManager::msgProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 		i->second->HandleMessages(hWnd,uMsg,wParam,lParam);
 }
 
-LightPtr SceneManager::createLight(const WString &name,const D3DXVECTOR4 &pos,const D3DXVECTOR4 &lookAt,const D3DXVECTOR4 &specular,FLOAT falloffAngle,FLOAT falloffExponent)
+LightPtr SceneManager::createLight(const WString &name, D3DXVECTOR3 &pos,  D3DXVECTOR3 &lookAt,const D3DXVECTOR4 &specular,FLOAT falloffAngle,FLOAT falloffExponent)
 {
 	LightPtr light=new Light(name,pos,lookAt,specular,falloffAngle,falloffExponent);
-
 	mLights[name]=light;
 	return light;
 }
@@ -861,14 +878,14 @@ void SceneManager::paramsUpdateEveryFrame(map<WString,ParameterPtr> &params)
 		else if(semantic=="POSITION")
 		{
 			tar=param->getAnnotation("Object");
-			D3DXVECTOR4 val=getLight(tar)->getPosition();
+			D3DXVECTOR3 val=getLight(tar)->getPosition();
 
 			param->getEffectVariable()->AsVector()->SetFloatVector(val);
 		}
 		else if(semantic=="DIRECTION")
 		{
 			tar=param->getAnnotation("Object");
-			D3DXVECTOR4 val=getLight(tar)->getLookAt()-getLight(tar)->getPosition();
+			D3DXVECTOR3 val=getLight(tar)->getLookAt()-getLight(tar)->getPosition();
 			param->getEffectVariable()->AsVector()->SetFloatVector(val);
 		}
 		else if(semantic=="SPECULAR")
@@ -936,7 +953,7 @@ void SceneManager::paramsUpdateEveryFrame(map<WString,ParameterPtr> &params)
 
 
 
-void SceneManager::paramsUpdateEveryMesh(map<WString,ParameterPtr> &params,MeshPtr mesh)
+void SceneManager::paramsUpdateEveryMesh(map<WString,ParameterPtr> &params,MeshInstancePtr mesh)
 {
 	::D3DXMATRIX world,view,proj;
 
@@ -1009,7 +1026,7 @@ void SceneManager::updataMatrixs(::ID3D10EffectMatrixVariablePtr var,const WStri
 	else if(semantic=="VIEWINVERSE")
 	{
 		var->SetMatrix(*D3DXMatrixInverse(&mres,&fres,&view));
- 
+
 
 	}
 	else if(semantic=="PROJECTIONINVERSE")
@@ -1097,6 +1114,8 @@ void SceneManager::createQuadBuf()
 
 	};
 
+
+
 	D3D10_BUFFER_DESC desc;
 	desc.BindFlags=D3D10_BIND_VERTEX_BUFFER;
 	desc.ByteWidth=sizeof(QuadVertex)*4;
@@ -1117,12 +1136,12 @@ void SceneManager::createQuadBuf()
 void SceneManager::drawQuad( ID3D10EffectPassPtr pass)
 {
 	mDevice->ClearDepthStencilView( getTexture(mCurDSV)->getDepthStencilView() ,::D3D10_CLEAR_DEPTH | ::D3D10_CLEAR_STENCIL,mClearDepth,0.0f);
-	 
+
 	UINT Strides[]={sizeof(QuadVertex)};
 	UINT Offsets[]={0};
 	mDevice->IASetVertexBuffers(0,1,&mQuadBuf,Strides,Offsets);
 	mDevice->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	 
+
 	pass->Apply(0);
 	mDevice->Draw(4,0);
 }
@@ -1161,37 +1180,10 @@ void SceneManager::clearRenderTargets()
 }
 
 
-void SceneManager::drawLine(const WString& str)
-{
-	mTextBuf[mTextNum++]=str;
-	if(mTextNum==MAX_PATH)
-		mTextNum=0;
-}
-
-
-void SceneManager::drawText(const D3DXVECTOR4 &color)
-{
-	mTextHelper->Begin();
-	mTextHelper->SetInsertionPos(2,0);
-	mTextHelper->SetForegroundColor(D3DXCOLOR(color.x,color.y,color.z,color.w));
-	UINT i;
-	for(i=0;i<mTextNum;i++)
-		mTextHelper->DrawTextLine(mTextBuf[i].getLPCWSTR());
-	mTextHelper->End();
-	mTextNum=0;
-}
 
 
 
 
-
-
-void SceneManager::drawData(const WString &name,const D3DXVECTOR4 &data) 
-{
-	WCHAR str[MAX_PATH];
-	swprintf(str,L"%s:%f %f %f %f",name.getLPCWSTR(),data.x,data.y,data.z,data.w);
-	drawLine(str);
-}
 
 
 
@@ -1234,28 +1226,10 @@ void SceneManager::presentToScreen(const WString &target)
 	mDevice->IASetPrimitiveTopology(::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	drawQuad(getEffect("Quad")->getTech(0)->GetPassByName("p0"));
 
-	drawText();		
+	TextPrinter::getSingleton()->drawText();	
 	clearRenderTargets();
 	clearShaderResources();
 }
 
 
 
-
-void SceneManager::markRenderEventBegin(const WString &effectName,const WString &passName,const WString &events)
-{
-#if defined(DEBUG) || defined(_DEBUG)
-	WCHAR str[MAX_PATH];
-	swprintf(str,L"CurEffectName:%s mCurPassName:%s evnts:%s",effectName.getLPCWSTR(),passName.getLPCWSTR(),events.getLPCWSTR());
-	::D3DPERF_BeginEvent(0xff,str);
-#endif
-}
-
-
-
-void SceneManager::markRenderEventEnd()
-{
-#if defined(DEBUG) || defined(_DEBUG)
-	D3DPERF_EndEvent();
-#endif
-}
