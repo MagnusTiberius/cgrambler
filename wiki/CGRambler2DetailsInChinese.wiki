@@ -58,13 +58,14 @@ http://www.cs.uu.nl/docs/vakken/ddm/slides/papers/rossignac.pdf
 http://portal.acm.org/citation.cfm?id=253284.253310
 
 ==测试数据：==
-文件名：goof_knight.sdkmesh	文件大小：183kb 	三角形数：6043   顶点数：3455
+||FileName：goof_knight.sdkmesh  ||FileSize：183kb 	    ||TrianglesNum：6043    ||VerticesNum：3455||
 
-文件名：Warrior.sdkmesh		文件大小：2.57 MB 	三角形数：11160  顶点数：33480
+||FileName：Warrior.sdkmesh	  ||FileSize：2.57 MB    ||TrianglesNum：11160   ||VerticesNum：33480||
 
-文件名：exoticcar.sdkmesh		文件大小：4.16 MB 	三角形数：40112  顶点数：120336
+||FileName：exoticcar.sdkmesh     ||FileSize：4.16 MB    || TrianglesNum：40112    || VerticesNum：120336||
 
-文件名：dragon.sdkmesh		文件大小：23.4 MB 	三角形数：871318 顶点数：441491
+||FileName：dragon.sdkmesh	  || FileSize：23.4 MB   ||TrianglesNum：871318   || VerticesNum：441491||
+
 
 
 = LOD_Solid_Knight=
