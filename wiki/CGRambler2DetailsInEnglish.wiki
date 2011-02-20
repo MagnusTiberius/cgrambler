@@ -36,7 +36,7 @@ Finished Time 2011/2/19
 repeat (2) for the next highest weighted vertex in the vertex-list.
 
 
-==参考文献：==
+==Reference：==
 《Multi-resolution 3D approximations for rendering complex scenes》
 
 http://www.cs.uu.nl/docs/vakken/ddm/slides/papers/rossignac.pdf
