@@ -20,10 +20,71 @@ CGRambler2.0是继CGRambler1.0之后，于2011年1月18号开始开发的一款�
 
 
 =Class Diagram=
-[http://img.ph.126.net/3TuRQa2fxqYf4SWEfVKD4Q==/2299087609773267113.jpg]
+
+[http://img460.ph.126.net/7HzgnyNovPwKVbtjlE6UjA==/1026257765088298215.jpg]
+
+
+---------------------------------------------------------------------------------------------------------------
+
+
+=模块3  无限地形=
+完成时间 2011/3/2
+
+==算法步骤==
+(1)	要载入超巨型高度图和纹理图，可以以摄象机为中心，在各个mip中载入周围的一小片。在论文中，这些载入到内存的数据，叫Stack，如下图所示。
+
+[http://http.developer.nvidia.com/GPUGems2/elementLinks/02_clipmaps_01.jpg]
+
+(2)	当摄象机移动时，以下面的方法更新Stack。
+
+[http://img161.ph.126.net/voC9hBMyFvoVeW-41Rbrgw==/2151031772024365500.jpg]
+
+(3)	建立密度不同的网格，离摄象机越近的网格越密。网格的中心和Stack的中心同步。
+
+[http://http.developer.nvidia.com/GPUGems2/elementLinks/02_clipmaps_02.jpg]
+
+==参考文献：==
+《Terrain Rendering Using GPU-Based Geometry Clipmaps》
+
+http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter02.html
+
+==引用原文:==
+这个技术容易实现，并且可以仅仅消耗355MB的内存，在一个高度图有20亿采样点的美国地形上进行交互式的飞行模拟，帧率在90左右。
+
+==测试地图：==
+火星
+
+=Terrain_Solid_Down=
+
+[http://img853.ph.126.net/W589dNInxd2aIb_10fWBog==/2737062673535435241.jpg]
+
+=Terrain_Level_Down=
+
+[http://img699.ph.126.net/NoCZGXG19znGNIWo4NXluA==/2841489889895263699.jpg]
+
+=Terrain_WireFrame_Down=
+
+[http://img115.ph.126.net/oB35IvB2XGFdNOn0vlLLFA==/685391568292393833.jpg]
+
+=Terrain_Solid_Up =
+
+[http://img153.ph.126.net/Thj4XqT2k1NrCR1QUufr3A==/1646628613759221087.jpg]
+
+=Terrain_Level_Up=
+
+[http://img617.ph.126.net/fd44zG2daBnH0-bRE0nb8A==/1913185416704390199.jpg]
+
+=Terrain_WireFrame_Up=
+
+[http://img116.ph.126.net/tPxcVso6-l9AFuFLffwAvg==/713539065963616603.jpg]
 
 
 -------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
 =模块2  Mesh Lod=
 完成时间 2011/2/19
 
