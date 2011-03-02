@@ -19,8 +19,67 @@ South China Normal University, Grade 2008, HaiQuan Li, cgrambler@gmail.com
 ---------------------------------------------------------------------------------------------------------------
 
 
+
+
 =Class Diagram=
-[http://img.ph.126.net/3TuRQa2fxqYf4SWEfVKD4Q==/2299087609773267113.jpg]
+[http://img460.ph.126.net/7HzgnyNovPwKVbtjlE6UjA==/1026257765088298215.jpg]
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+
+=Module 3  Geometry Clipmaps=
+Finished Time 2011/3/2
+
+== Algorithm :==
+(1) To load huge height map and texture, you can just load a small area around the camera. In the paper, this is call Stack. As the picture show below.
+
+[http://http.developer.nvidia.com/GPUGems2/elementLinks/02_clipmaps_01.jpg]
+
+ (2) As the camera move, update the Stack as below.
+
+[http://img161.ph.126.net/voC9hBMyFvoVeW-41Rbrgw==/2151031772024365500.jpg]
+
+ (3) Build different LOD of grids, the one which nearest to the camera should be in most detail. Synchronize the center of the grids to the center of the Stack.
+
+[http://http.developer.nvidia.com/GPUGems2/elementLinks/02_clipmaps_02.jpg]
+
+==Reference:==
+《Terrain Rendering Using GPU-Based Geometry Clipmaps》
+
+http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter02.html
+
+==Quote:==
+The technique is easy to implement, and allows interactive flight over a 20-billion-sample grid of the United States stored in just 355 MB of memory, at around 90 frames per second.
+
+==Test Map:==
+Mars
+
+=Terrain_Solid_Down=
+
+[http://img853.ph.126.net/W589dNInxd2aIb_10fWBog==/2737062673535435241.jpg]
+
+=Terrain_Level_Down=
+
+[http://img699.ph.126.net/NoCZGXG19znGNIWo4NXluA==/2841489889895263699.jpg]
+
+=Terrain_WireFrame_Down=
+
+[http://img115.ph.126.net/oB35IvB2XGFdNOn0vlLLFA==/685391568292393833.jpg]
+
+=Terrain_Solid_Up =
+
+[http://img153.ph.126.net/Thj4XqT2k1NrCR1QUufr3A==/1646628613759221087.jpg]
+
+=Terrain_Level_Up=
+
+[http://img617.ph.126.net/fd44zG2daBnH0-bRE0nb8A==/1913185416704390199.jpg]
+
+=Terrain_WireFrame_Up=
+
+[http://img116.ph.126.net/tPxcVso6-l9AFuFLffwAvg==/713539065963616603.jpg]
+
+ 
 
 
 -------------------------------------------------------------------------------------------------------------------
